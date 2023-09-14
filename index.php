@@ -23,7 +23,7 @@
                  $data = $query->fetch(PDO::FETCH_ASSOC);
 
                  if($data) {
-                     $_SESSION['prenom'] = $newuser;
+                     $_SESSION['user'] = $newuser;
                      $_SESSION['password'] = $newpassword;
                      echo "Connexion réussie";
                      header('refresh: 1;url= ./index.php');
@@ -121,6 +121,7 @@ if (isset($_GET['conn']) && !empty($_GET['conn'])){
                     <li><a href="./profil.php">Profil</a></li>
                     <li><a href="./index.php?conn=disconnect">Se déconnecter</a></li>
                     <!-- if dollar session existant + status admin -->
+                        <?php if($_SESSION['user'] === )
                     <li><a href="./admin.php">Outils Administrateur</a></li>
                     <?php endif; ?>
                 </ul>
