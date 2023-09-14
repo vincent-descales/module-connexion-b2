@@ -58,7 +58,7 @@
         $vquery->bindValue(':login', $usr->getLogin());
         $vquery->execute();
         $vdata = $query->fetch(PDO::FETCH_ASSOC);
-        // si fetch retourne false cela veut dire qu'il n'existe pas de même login.
+        // si fetch retourne false cela veut dire qu'il n'existe pas de même login et alors il rentrera dans la boucle.
         if(!$vdata) {
             // puis on vérifie si les mot de passe entrés dans les champs sont les mêmes.
             if ($usr->getPassword() === $usr->getPasswordre()) {
@@ -89,6 +89,7 @@
         } */
 }
 $conn = new Connexion();
+// Pour lancer nos méthodes on vérifie d'abord si aucun d'un de nos champ(s) sont/est vide(s).
 if (isset($_POST['user']) && !empty($_POST['user']) 
 && isset($_POST['password']) && !empty($_POST['password'])) {
     $conn->initSecureConnexionAndRegister();
@@ -125,16 +126,16 @@ if (isset($_GET['conn']) && !empty($_GET['conn'])){
             <div class="toggle">
                 <ul>
                     <li><a href="./index.php">Accueil</a></li>
-                    <!-- if dollar SESSION (profil ou (inscripton & connexion) ici pour savoir si on est connecté ou pas  -->
+                    <!-- if dollar SESSION est vide (par défault tableau vide)  -->
                     <?php if(!$_SESSION): ?>
                     <li><a href="./connexion.php">Connexion</a></li>
                     <li><a href="./inscription.php">Inscription</a></li>
                     <?php endif; ?>
-                    <!-- if SESSION existant -->
+                    <!-- if SESSION rempli -->
                     <?php if($_SESSION): ?>
                     <li><a href="./profil.php">Profil</a></li>
                     <li><a href="./index.php?conn=disconnect">Se déconnecter</a></li>
-                    <!-- if dollar session existant + status admin -->
+                    <!-- if dollar session existant + status admin du premier utilisateur -->
                     <?php if($_SESSION['user'] === "admiN1337$" && $_SESSION['password'] === "admiN1337$"): ?>
                     <li><a href="./admin.php">Outils Administrateur</a></li>
                     <?php endif; ?>
