@@ -61,6 +61,7 @@
             $iquery->bindValue(':password', $usr->getPassword());
             $iquery->execute();
             echo 'Inscription réussie ! Veuillez vous connecter pour démarrer une session.';
+            header('refresh: 2;url= ./index.php');
         }
         else {
             header('location: ./inscription.php?inscr=notsamepwd');
