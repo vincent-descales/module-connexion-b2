@@ -53,18 +53,32 @@
         $usr->setPassword(htmlspecialchars($_POST['ipassword']));
         $usr->setPasswordre(htmlspecialchars($_POST['ipasswordre']));
 
-        if ($usr->getPassword() === $usr->getPasswordre()) {
-            $iquery = $this->connexion->prepare("INSERT INTO user (login, firstname, lastname, password) VALUES (:login, :firstname, :lastname, :password)");
-            $iquery->bindValue(':login', $usr->getLogin());
-            $iquery->bindValue(':firstname', $usr->getFirstname());
-            $iquery->bindValue(':lastname', $usr->getLastname());
-            $iquery->bindValue(':password', $usr->getPassword());
-            $iquery->execute();
-            echo 'Inscription réussie ! Veuillez vous connecter pour démarrer une session.';
-            header('refresh: 2;url= ./index.php');
+        // on vérifie ici à l'aide d'une requête SQL si le Login est différent des aures
+        $vquery = $this->connexion->prepare("SELECT login FROM user WHERE login = :login");
+        $vquery->bindValue(':login', $usr->getLogin());
+        $vquery->execute();
+        $vdata = $query->fetch(PDO::FETCH_ASSOC);
+        // si fetch retourne false cela veut dire qu'il n'existe pas de même login.
+        if(!$vdata) {
+            // puis on vérifie si les mot de passe entrés dans les champs sont les mêmes.
+            if ($usr->getPassword() === $usr->getPasswordre()) {
+                $iquery = $this->connexion->prepare("INSERT INTO user (login, firstname, lastname, password) VALUES (:login, :firstname, :lastname, :password)");
+                $iquery->bindValue(':login', $usr->getLogin());
+                $iquery->bindValue(':firstname', $usr->getFirstname());
+                $iquery->bindValue(':lastname', $usr->getLastname());
+                $iquery->bindValue(':password', $usr->getPassword());
+                $iquery->execute();
+                echo 'Inscription réussie ! Veuillez vous connecter pour démarrer une session.';
+                header('refresh: 2;url= ./index.php');
+            }
+            else {
+                // on redirige avec une instruction dollar get si les mot de passe ne correspondent pas.
+                header('location: ./inscription.php?inscr=notsamepwd');
+            }
         }
         else {
-            header('location: ./inscription.php?inscr=notsamepwd');
+            // on redirige avec une autre instruction dollar get si le nom d'utilisateur existe déjà.
+            header('location: ./inscription.php?inscr=alreadyexist');
         }
 
             
@@ -121,8 +135,9 @@ if (isset($_GET['conn']) && !empty($_GET['conn'])){
                     <li><a href="./profil.php">Profil</a></li>
                     <li><a href="./index.php?conn=disconnect">Se déconnecter</a></li>
                     <!-- if dollar session existant + status admin -->
-                        <?php if($_SESSION['user'] === )
+                    <?php if($_SESSION['user'] === "admiN1337$" && $_SESSION['password'] === "admiN1337$"): ?>
                     <li><a href="./admin.php">Outils Administrateur</a></li>
+                    <?php endif; ?>
                     <?php endif; ?>
                 </ul>
             </div>
