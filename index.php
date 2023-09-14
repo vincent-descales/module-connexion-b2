@@ -57,7 +57,7 @@
         $vquery = $this->connexion->prepare("SELECT login FROM user WHERE login = :login");
         $vquery->bindValue(':login', $usr->getLogin());
         $vquery->execute();
-        $vdata = $query->fetch(PDO::FETCH_ASSOC);
+        $vdata = $vquery->fetch(PDO::FETCH_ASSOC);
         // si fetch retourne false cela veut dire qu'il n'existe pas de même login et alors il rentrera dans la boucle.
         if(!$vdata) {
             // puis on vérifie si les mot de passe entrés dans les champs sont les mêmes.
