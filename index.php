@@ -79,14 +79,12 @@
         else {
             // on redirige avec une autre instruction dollar get si le nom d'utilisateur existe déjà.
             header('location: ./inscription.php?inscr=alreadyexist');
-        }
-
-            
+        }  
     }
 
-        /*if (isset($_POST['iuser']) && !empty($_POST['iuser']) && isset($_POST['ipassword']) && !empty($_POST['ipassword'])) {
+    /* if (isset($_POST['iuser']) && !empty($_POST['iuser']) && isset($_POST['ipassword']) && !empty($_POST['ipassword'])) {
 
-        } */
+    } */
 }
 $conn = new Connexion();
 // Pour lancer nos méthodes on vérifie d'abord si aucun d'un de nos champ(s) sont/est vide(s).
@@ -145,6 +143,7 @@ if (isset($_GET['conn']) && !empty($_GET['conn'])){
         </header>
         <main>
             <div class="container">
+                <?php if(!$_SESSION): ?>
                 <section class="banner">
                     <div class="textBx">
                         <h2>Découvrer l'assurance</h2>
@@ -154,7 +153,7 @@ if (isset($_GET['conn']) && !empty($_GET['conn'])){
                         <a href="./connexion.php" class="btn desktop">Connectez vous !</a>
                     </div>
                 </section>
-
+                <?php endif; ?>
                 <section class="about">
                     <div class="titre">
                         <h2>Une assurance élue meilleure touriste et tout risque depuis 2022 !</h2>

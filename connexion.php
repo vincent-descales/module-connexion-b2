@@ -1,5 +1,21 @@
 <!DOCTYPE html>
 <?php
+session_start();
+
+class ConnexionMessages {
+    // Lorsque l'utilisateur n'est pas trouvé, index.php va nous renvoyer une séquence $_GET avec un élément et la méthode va nous renvoyer un message.
+    public function notFound() {
+        // On vérifie d'abord si $_GET['conn'] existe
+        if (isset($_GET['conn']) && !empty($_GET['conn'])) {
+            // Et qu'il est egal à notfound
+            if($_GET['conn'] === 'notfound') {
+                echo 'Utilisateur ou Mot de passe incorrect';
+                header('refresh: 1;url= ./connexion.php');
+            }
+        }
+    }
+}
+$msg = new ConnexionMessages();
 
 ?>
 <html lang="fr">
@@ -20,13 +36,20 @@
             <div class="toggle">
                 <ul>
                     <li><a href="./index.php">Accueil</a></li>
-                    <!-- if dollar SESSION (profil ou (inscripton & connexion) ici pour savoir si on est connecté ou pas  -->
+                    <!-- if dollar SESSION est vide (par défault tableau vide)  -->
+                    <?php if(!$_SESSION): ?>
                     <li><a href="./connexion.php">Connexion</a></li>
                     <li><a href="./inscription.php">Inscription</a></li>
-                    <!-- if SESSION existant -->
+                    <?php endif; ?>
+                    <!-- if SESSION rempli -->
+                    <?php if($_SESSION): ?>
                     <li><a href="./profil.php">Profil</a></li>
-                    <!-- if dollar session existant + status admin -->
+                    <li><a href="./index.php?conn=disconnect">Se déconnecter</a></li>
+                    <!-- if dollar session existant + status admin du premier utilisateur -->
+                    <?php if($_SESSION['user'] === "admiN1337$" && $_SESSION['password'] === "admiN1337$"): ?>
                     <li><a href="./admin.php">Outils Administrateur</a></li>
+                    <?php endif; ?>
+                    <?php endif; ?>
                 </ul>
             </div>
         </header>
@@ -52,7 +75,8 @@
                                             <input type="hidden" name="csrf_token" value="token">
                                         </div>
                                         <a href="https://sagefamily.fr/wp-content/uploads/2021/08/Publi-Facebook-7.png">Mot de passe oublié?</a><br>
-                                        <button>Connexion</button>
+                                        <?= $msg->notFound(); ?>
+                                        <button>Connexion</button> 
                                     </fieldset>
                                 </form>
                             </div>

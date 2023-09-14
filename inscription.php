@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php
+session_start();
+?>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
@@ -18,13 +21,21 @@
 
         <div class="toggle">
             <ul>
-                <li><a href="#">Accueil</a></li>
-                <!-- if dollar SESSION (profil ou (inscripton & connexion) ici pour savoir si on est connecté ou pas  -->
-                <li><a href="#">Profil</a></li>
-                <!-- if SESSION existant -->
-                <li><a href="#">Modifier son profil</a></li>
-                <!-- if dollar session existant + status admin -->
-                <li><a href="#">Outils Administrateur</a></li>
+            <li><a href="./index.php">Accueil</a></li>
+                    <!-- if dollar SESSION est vide (par défault tableau vide)  -->
+                    <?php if(!$_SESSION): ?>
+                    <li><a href="./connexion.php">Connexion</a></li>
+                    <li><a href="./inscription.php">Inscription</a></li>
+                    <?php endif; ?>
+                    <!-- if SESSION rempli -->
+                    <?php if($_SESSION): ?>
+                    <li><a href="./profil.php">Profil</a></li>
+                    <li><a href="./index.php?conn=disconnect">Se déconnecter</a></li>
+                    <!-- if dollar session existant + status admin du premier utilisateur -->
+                    <?php if($_SESSION['user'] === "admiN1337$" && $_SESSION['password'] === "admiN1337$"): ?>
+                    <li><a href="./admin.php">Outils Administrateur</a></li>
+                    <?php endif; ?>
+                    <?php endif; ?>
             </ul>
         </div>
     </header>
