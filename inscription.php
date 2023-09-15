@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <?php
 session_start();
+class Inscription {
+    public function session() {
+        if($_SESSION) {
+            header('location: ./index.php');
+        }
+    }
+
+}
+$inscription = new inscription();
+$inscription->session();
 ?>
 <html lang="fr">
     <head>

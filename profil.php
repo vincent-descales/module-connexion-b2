@@ -37,9 +37,14 @@ class Profil Extends Database {
             }
         }
     }
+    public function session() {
+        if(!$_SESSION) {
+            header('location: ./index.php');
+        }
+    }
 }
 $profil = new Profil();
-
+$profil->session();
 echo $profil->securePasswordUpdate();
 ?>
 <html lang="fr">

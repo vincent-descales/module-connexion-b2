@@ -75,7 +75,7 @@ class Admin extends Database {
             && isset($_POST['adminpassword' . $y]) && !empty($_POST['adminpassword' . $y])) {
                 $goodid=$y+1;
                 $mquery = $this->connexion->prepare('UPDATE user SET login = :login, firstname = :firstname, lastname = :lastname, password = :password WHERE id = :id');
-                $mquery->bindValue(':login', $_POST['adminlogin' . $y]);
+                $mquery->bindValue(':login', $_POST['adminlogin' . $y],PDO::PARAM_STR);
                 $mquery->bindValue(':firstname', $_POST['adminfirstname' . $y]);
                 $mquery->bindValue(':lastname', $_POST['adminlastname' . $y]);
                 $mquery->bindValue(':password', $_POST['adminpassword' . $y]);

@@ -14,9 +14,14 @@ class ConnexionMessages {
             }
         }
     }
+    public function session() {
+        if($_SESSION) {
+            header('location: ./index.php');
+        }
+    }
 }
 $msg = new ConnexionMessages();
-
+$msg->session();
 ?>
 <html lang="fr">
     <head>
