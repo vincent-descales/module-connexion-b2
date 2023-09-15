@@ -1,6 +1,46 @@
 <!DOCTYPE html>
 <?php
 session_start();
+require_once './bdd-connexion/Database.php';
+class Profil Extends Database {
+    
+    public function __construct() {
+        parent::__construct();
+        
+    }
+
+    public function initInfoProfil(): array {
+       $query = $this->connexion->prepare('SELECT * FROM user WHERE login = :login AND password = :password');
+       $query->bindValue(':login', $_SESSION['user']);
+       $query->bindValue(':password', $_SESSION['password']);
+       $query->execute();
+       $data = $query->fetch(PDO::FETCH_ASSOC);
+       return $data;
+    }
+    public function securePasswordUpdate() {
+        if (isset($_POST['modpwd']) && !empty($_POST['modpwd']) && isset($_POST['modnewpwd']) && !empty($_POST['modnewpwd']) && isset($_POST['vermodnewpwd']) && !empty($_POST['vermodnewpwd'])) {
+            if ($_POST['modpwd'] !== $_POST['modnewpwd'] && $_POST['modpwd'] !== $_POST['vermodnewpwd']) {
+                if ($_POST['modnewpwd'] === $_POST['vermodnewpwd']) {
+                    $mquery = $this->connexion->prepare('UPDATE user SET password = :password WHERE login = :login');
+                    $mquery->bindValue(':password', htmlspecialchars($_POST['vermodnewpwd']));
+                    $mquery->bindValue(':login', $_SESSION['user']);
+                    $_SESSION['password'] = htmlspecialchars($_POST['vermodnewpwd']); 
+                    $mquery->execute();
+                    return 'Changement du mot de passe réussi !';
+                }
+                else {
+                    return 'Attention les nouveaux mot de passe ne correspondent pas !';
+                }
+            }
+            else {
+                return 'Attention les mots de passe (ancien & nouveau) sont les mêmes veuillez les modifier correctement';
+            }
+        }
+    }
+}
+$profil = new Profil();
+
+echo $profil->securePasswordUpdate();
 ?>
 <html lang="fr">
     <head>
@@ -47,10 +87,21 @@ session_start();
                                     <div class="blockColor"></div>
                                     <div class="contentBx justify">
                                         <h3>Connexion</h3>
-                                        <p>Nom :  <?php /*$user->getLname()*/ ?></p>
-                                        <p>Prénom : <?php /*$user->getFname()*/ ?> </p>
-                                        <p>Email : <?php /*$user->getEmail()*/ ?> </p>
-                                        <a href="#">Modifier mot de Passe</a>
+                                        <p>Nom :  <?= $profil->initInfoProfil()['lastname'] ?></p>
+                                        <p>Prénom : <?= $profil->initInfoProfil()['firstname'] ?> </p>
+                                        <p>Nom d'utilisateur : <?= $profil->initInfoProfil()['login'] ?> </p>
+                                        <form action="./profil.php" method="POST">
+                                            <details>
+                                                <summary>Modifier le mot de passe -></summary>
+                                                <p>Ancien mot de passe :</p>
+                                                <input type="password" id="modpwd" name="modpwd" placeholder="Entrez votre ancien mot de passe" required>
+                                                <p>Nouveau mot de passe :</p>
+                                                <input type="password" id="modnewpwd" name="modnewpwd" placeholder="Entrez votre nouveau mot de passe" required>
+                                                <p>Vérifiez à nouveau votre nouveau mot de passe :</p>
+                                                <input type="password" id="vermodnewpwd" name="vermodnewpwd" placeholder="Réitérez" required>
+                                                <button>Valider le changement</button>
+                                            </details>
+                                        </form>
                                     </div>
                                 </div>
                             </section>

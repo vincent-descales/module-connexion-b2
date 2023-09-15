@@ -68,7 +68,6 @@ $msg = new ConnexionMessages();
                                             <label for="user">Nom d'utilisateur</label> <br>
                                             <input type="text" id="user" name="user" value="" required>
                                         </div>
-
                                         <div class="field">
                                             <label for="password">Mot de Passe</label> <br>
                                             <input type="password" id="password" name="password" value="" required>

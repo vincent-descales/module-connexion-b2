@@ -15,30 +15,91 @@ class Admin extends Database {
             header('location: ./index.php');
         }
     }
-    public function everyone() {
+    public function showEveryone() {
         $query = $this->connexion->prepare('SELECT * FROM user');
         //var_dump($query);
         $query->execute();
         $data = $query->fetchAll();
 
         if($data) {
-            foreach ($data as $dat) {
-                echo $dat['id'] . $dat['login'];
+            for ($i=0; $i<count($data); $i++) {
+                echo '
+                  <tr>
+                    <td>' . $data[$i]['id'] . '</td>
+                    <td>' . $data[$i]['login'] . '
+                    <details>
+                        <summary>Modifier -></summary>
+                        <input type="text" id="adminlogin' . $i . '" name="adminlogin' . $i . '" value="' . $data[$i]['login'] .'" required>
+                    </details>
+                    </td>
+                    <td>' . $data[$i]['firstname'] . '
+                    <details>
+                        <summary>Modifier -></summary>
+                        <input type="text" id="adminfirstname' . $i . '" name="adminfirstname' . $i . '" value="' . $data[$i]['firstname'] .'" required>
+                    </details>
+                    </td>
+                    <td>' . $data[$i]['lastname'] . '
+                    <details>
+                        <summary>Modifier -></summary>
+                        <input type="text" id="adminlastname' . $i . '" name="adminlastname' . $i . '" value="' . $data[$i]['lastname'] .'" required>
+                    </details>
+                    </td>
+                    <td>' . $data[$i]['password'] . '
+                    <details>
+                        <summary>Modifier -></summary>
+                        <input type="text" id="adminpassword' . $i . '" name="adminpassword' . $i . '" value="' . $data[$i]['password'] .'" required>
+                        
+                    </details>
+                    </td>
+                    <td>
+                    
+                        <input type="checkbox" id="deleteuser' . $i .'" name="deleteuser' . $i .'" value="Supprimer">
+                    
+                    </td>
+                </tr>
+                ';
             }
-            var_dump($data);
+            
             
             
         }
     }
+    public function updateAndDeleteInformation() {
+        $cquery = $this->connexion->prepare('SELECT * FROM user');
+        $cquery->execute();
+        $cdata = $cquery->fetchAll();
+        for ($y=0; $y<count($cdata); $y++) {
+            if (isset($_POST['adminlogin' . $y]) && !empty($_POST['adminlogin' . $y]) 
+            && isset($_POST['adminfirstname' . $y]) && !empty($_POST['adminfirstname' . $y])
+            && isset($_POST['adminlastname' . $y]) && !empty($_POST['adminlastname' . $y]) 
+            && isset($_POST['adminpassword' . $y]) && !empty($_POST['adminpassword' . $y])) {
+                $goodid=$y+1;
+                $mquery = $this->connexion->prepare('UPDATE user SET login = :login, firstname = :firstname, lastname = :lastname, password = :password WHERE id = :id');
+                $mquery->bindValue(':login', $_POST['adminlogin' . $y]);
+                $mquery->bindValue(':firstname', $_POST['adminfirstname' . $y]);
+                $mquery->bindValue(':lastname', $_POST['adminlastname' . $y]);
+                $mquery->bindValue(':password', $_POST['adminpassword' . $y]);
+                $mquery->bindValue(':id', $goodid);
+                $mquery->execute();
+            }
+            if(isset($_POST['deleteuser' . $y])) {
+                $goodidy=$y+1;
+                $dquery = $this->connexion->prepare('DELETE FROM user WHERE id = :id');
+                $dquery->bindValue(':id', $goodidy);
+                $dquery->execute();
+            }
+        }
+    }
 }
 $admin = new Admin();
+$admin->updateAndDeleteInformation();
 $admin->isnotAdmin();
 ?>
 <html lang="fr">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Administrer les pigeons - Assurance tourisqte</title>
+        <title>Administration - Assurance tourisqte</title>
         <link rel="stylesheet" href="./css/styles.css">
 
     </head>
@@ -75,11 +136,26 @@ $admin->isnotAdmin();
         <main>
             <div class="container">
                 <div id="users">
-                    <h1>Administration des pigeons (oui on aime la moula et l'assurance ne vous aidera pas).</h1>
-                    <h2>Listes des utilisateurs :</h2>
-                    <div id="jsonutilisateur">
-                        <?php $admin->everyone(); ?>
-                    </div>
+                    <h1>Administration.</h1>
+                    <h2>Listes des utilisateurs (! Ne modifiez pas les informations de admin /!\ cela peut créer des erreurs de sessions !) :</h2>
+                    <form action="./admin.php" method="POST">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID (non modifiable)</th>
+                                    <th>Utilisateur</th>
+                                    <th>Prénom</th>
+                                    <th>Nom</th>
+                                    <th>Mot de passe</th>
+                                    <th>Supprimer l'utilisateur ?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php $admin->showEveryone(); ?>
+                            </tbody>
+                        </table>
+                        <button>Valider les modifcations</button>
+                    </form>
                 </div>
             </div>
         </main>
